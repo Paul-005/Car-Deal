@@ -1,0 +1,35 @@
+{
+  "expo": {
+    "name": "Car Deal",
+    "slug": "Car-Paul",
+    "description": "Car Deal app helps you to find your Used Car",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/splash.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/splash.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "package": "com.paulbabu05.cardeal"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "githubUrl": "https://github.com/Paul-005/Car-Deal-React-Native"
+  }
+}

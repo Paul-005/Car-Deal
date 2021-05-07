@@ -21,15 +21,13 @@ import {
   Ionicons,
   SimpleLineIcons,
 } from "@expo/vector-icons";
-import { Card, IconButton } from "react-native-paper";
+import { Card, TextInput as PaperInput } from "react-native-paper";
 import * as firebase from "firebase";
 import "firebase/auth";
 
 import SellCar from "./SellCar";
 import NeedCar from "./NeedCar";
-import CarDetails from "./CarDetails";
 import Profile from "./profile";
-import onBoarding from "./Onboard";
 
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyBsUWtnnpfv3wlZa76X5wfPhr25sJfRlFE",
@@ -54,7 +52,9 @@ function Options({ navigation }) {
   const [password, setPassword] = useState("");
   const [userCredential, setUserCredentials] = useState([]);
   const [modal, setModal] = useState(true);
+  const [displayName, setDisplayName] = useState("");
   const [onBoarding, setOnBoarding] = useState(false);
+  const [SignUpModalState, setSignUpModalState] = useState(false);
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged(function (user) {
@@ -73,6 +73,7 @@ function Options({ navigation }) {
     "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/my20-gt-r-nismo-germany-24-source-1562607770.jpg",
     "https://gaadiwaadi.com/wp-content/uploads/2020/09/2021-Mercedes-Benz-S-Class-6.jpg",
     "https://cdni.autocarindia.com/Utils/ImageResizer.ashx?n=https%3A%2F%2Fcdni.autocarindia.com%2FExtraImages%2F20190404024935_DSC_4718.jpg&h=795&w=1200&c=0",
+    "https://cdn.motor1.com/images/mgl/X1KM6/s1/2021-rolls-royce-ghost-exterior.jpg",
   ];
 
   const SignUp = () => {
@@ -82,10 +83,30 @@ function Options({ navigation }) {
       .then((userCredential) => {
         Alert.alert("Successfully Created an account", "Welcome");
         setUserCredentials(userCredential);
-        navigation.navigate("Profile");
+        setSignUpModalState(false);
+        setModal(false);
+        firebase
+          .auth()
+          .currentUser.updateProfile({
+            displayName: displayName,
+          })
+          .catch((err) => alert(err.message));
       })
       .catch((err) => {
         Alert.alert("Auth Error", err.message);
+      });
+  };
+
+  const forgetPassword = () => {
+    firebase
+      .auth()
+      .sendPasswordResetEmail(email)
+      .then(function () {
+        alert("Please check your email.");
+      })
+      .catch(function (error) {
+        alert(error.message);
+        console.log(error);
       });
   };
 
@@ -141,8 +162,82 @@ function Options({ navigation }) {
         <TouchableOpacity style={styles.loginBtn} onPress={Login}>
           <Text style={styles.loginText}>Login</Text>
         </TouchableOpacity>
+        <TouchableOpacity onPress={forgetPassword}>
+          <Text>Forgot Password? </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            setModal(false);
+            setSignUpModalState(true);
+          }}
+        >
+          <Text>Don't Have An Account? Signup</Text>
+        </TouchableOpacity>
+        <Text style={{ top: 160 }}>Created By Paul</Text>
+      </View>
+    </Modal>
+  );
+
+  const SignUpModal = (
+    <Modal visible={SignUpModalState} animationType="slide">
+      <View style={styles.container}>
+        <Image
+          source={require("../assets/icon.png")}
+          style={{ height: 100, width: 100 }}
+        />
+        <Text
+          style={{
+            fontWeight: "bold",
+            fontSize: 25,
+            color: "purple",
+            top: 20,
+            textAlign: "center",
+            marginBottom: 40,
+          }}
+        >
+          Register to Car Deal
+        </Text>
+        <View style={styles.inputView}>
+          <TextInput
+            style={styles.inputText}
+            required
+            placeholder="Enter Email..."
+            placeholderTextColor="black"
+            onChangeText={(val) => setEmail(val)}
+          />
+        </View>
+
+        <View style={styles.inputView}>
+          <TextInput
+            required
+            animationType
+            secureTextEntry
+            style={styles.inputText}
+            placeholder="Password..."
+            placeholderTextColor="black"
+            onChangeText={(val) => setPassword(val)}
+          />
+        </View>
+
+        <View style={styles.inputView}>
+          <TextInput
+            style={styles.inputText}
+            placeholder="Enter Your Name..."
+            placeholderTextColor="green"
+            onChangeText={(value) => setDisplayName(value)}
+          />
+        </View>
+
         <TouchableOpacity style={styles.loginBtn} onPress={SignUp}>
-          <Text style={styles.loginText}>Signup</Text>
+          <Text style={styles.loginText}>Sign In</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            setSignUpModalState(false);
+            setModal(true);
+          }}
+        >
+          <Text>Already have an account? Login</Text>
         </TouchableOpacity>
         <Text style={{ top: 160 }}>Created By Paul</Text>
       </View>
@@ -151,45 +246,64 @@ function Options({ navigation }) {
 
   return (
     <SafeAreaView style={styleOptions.container}>
-      {LoginModal}
-      <Modal visible={onBoarding} animationType="fade">
-        {onBoarding}
-      </Modal>
       <ImageBackground source={image} style={styleOptions.image}>
-        <View style={{ marginTop: 100, marginBottom: 40 }}>
+        <View style={{ marginTop: 50, marginBottom: 40 }}>
+          {LoginModal}
+          {SignUpModal}
           <SliderBox images={SlideImage} autoplay circleLoop />
         </View>
         <ScrollView>
-          <Card style={{ marginVertical: 30, borderRadius: 30 }}>
-            <Card.Title
-              title="Nissan Sunny "
-              size={20}
-              right={() => (
-                <Image
-                  style={{ height: 100, width: 180 }}
-                  source={{
-                    uri:
-                      "https://imgctcf.aeplcdn.com/thumbs/p-nc-b-ver54/images/cars/Nissan-Sunny-2011.jpg",
-                  }}
-                />
-              )}
-            />
-          </Card>
-          <Card style={{ marginVertical: 30, borderRadius: 30 }}>
-            <Card.Title
-              title="Toyota Yaris "
-              size={20}
-              right={() => (
-                <Image
-                  style={{ height: 100, width: 160, borderRadius: 20 }}
-                  source={{
-                    uri:
-                      "https://stimg.cardekho.com/images/carexteriorimages/930x620/Toyota/Yaris/7283/1579858168291/front-left-side-47.jpg",
-                  }}
-                />
-              )}
-            />
-          </Card>
+          <TouchableOpacity onPress={() => navigation.navigate("NeedCar")}>
+            <Card style={{ marginVertical: 30, borderRadius: 30 }}>
+              <Card.Title
+                title="Nissan Sunny "
+                size={20}
+                right={() => (
+                  <Image
+                    style={{ height: 100, width: 180 }}
+                    source={{
+                      uri:
+                        "https://imgctcf.aeplcdn.com/thumbs/p-nc-b-ver54/images/cars/Nissan-Sunny-2011.jpg",
+                    }}
+                  />
+                )}
+              />
+            </Card>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("NeedCar")}>
+            <Card style={{ marginVertical: 30, borderRadius: 30 }}>
+              <Card.Title
+                title="Toyota Yaris "
+                size={20}
+                right={() => (
+                  <Image
+                    style={{ height: 100, width: 160, borderRadius: 20 }}
+                    source={{
+                      uri:
+                        "https://stimg.cardekho.com/images/carexteriorimages/930x620/Toyota/Yaris/7283/1579858168291/front-left-side-47.jpg",
+                    }}
+                  />
+                )}
+              />
+            </Card>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("NeedCar")}>
+            <Card style={{ marginVertical: 30, borderRadius: 30 }}>
+              <Card.Title
+                title="Skoda Rapid "
+                size={20}
+                right={() => (
+                  <Image
+                    style={{ height: 100, width: 160, borderRadius: 20 }}
+                    source={{
+                      uri:
+                        "https://media.zigcdn.com/media/content/2019/Dec/zw-2020-skoda-rapid.jpg",
+                    }}
+                  />
+                )}
+              />
+            </Card>
+          </TouchableOpacity>
         </ScrollView>
       </ImageBackground>
     </SafeAreaView>
@@ -264,7 +378,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginTop: 40,
-    marginBottom: 10,
+    marginBottom: 50,
   },
   loginText: {
     color: "white",
@@ -318,7 +432,7 @@ const TabNavigator = createMaterialBottomTabNavigator(
         ),
         activeColor: "yellow",
         inactiveColor: "white",
-        barStyle: { backgroundColor: "#0BE397" },
+        barStyle: { backgroundColor: "#6D5BD9" },
       },
     },
   },

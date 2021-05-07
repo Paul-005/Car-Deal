@@ -5,7 +5,7 @@
     "description": "Car Deal app helps you to find your Used Car",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/splash.png",
+    "icon": "./assets/Icon-Car-Deal.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -22,7 +22,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/splash.png",
+        "foregroundImage": "./assets/Icon-Car-Deal.png",
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.paulbabu05.cardeal"

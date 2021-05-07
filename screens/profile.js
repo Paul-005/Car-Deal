@@ -2,14 +2,13 @@ import React, { useState } from "react";
 import { View, Text, Button, StyleSheet, Alert } from "react-native";
 import { profile } from "../globalStyles";
 import firebase from "firebase";
-import { TextInput, Modal, Avatar } from "react-native-paper";
+import { TextInput, Avatar } from "react-native-paper";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { FontAwesome5 } from "@expo/vector-icons";
 
 export default function Profile({ navigation }) {
   const user = firebase.auth().currentUser;
-  const [displayName, setDisplayName] = useState("");
   const userDetails = firebase.auth();
-  const [updateProfileModal, setUpdateProfileModal] = useState(false);
 
   const signOut = () => {
     firebase
@@ -27,24 +26,6 @@ export default function Profile({ navigation }) {
         Alert.alert(
           "Email Verification",
           "An Mail has been sent your your email. please verify."
-        );
-      })
-      .catch(function (error) {
-        alert(error.message);
-      });
-  };
-
-  const updateProfile = () => {
-    user
-      .updateProfile({
-        displayName: displayName,
-      })
-      .then(function () {
-        setDisplayName("");
-        setUpdateProfileModal(false);
-        Alert.alert(
-          "Auth Profile",
-          "Your profile has been successfully updated"
         );
       })
       .catch(function (error) {
@@ -93,52 +74,20 @@ export default function Profile({ navigation }) {
           </TouchableOpacity>
         </View>
       </View>
-      <Modal
-        visible={updateProfileModal}
-        contentContainerStyle={{ backgroundColor: "dodgerblue" }}
-      >
-        <View style={{ marginVertical: 50, alignItems: "center" }}>
-          <Text
-            onPress={() => setUpdateProfileModal(false)}
-            style={{
-              left: 100,
-              color: "white",
-              fontSize: 20,
-              marginVertical: 10,
-            }}
-          >
-            X
-          </Text>
-          <TextInput
-            style={{ width: 300 }}
-            placeholder="eg: Paul Babu"
-            type="outlined"
-            label="Your Name"
-            value={displayName}
-            error={displayName.length ? false : true}
-            onChangeText={(displayName) => setDisplayName(displayName)}
-          />
-          <View style={{ alignItems: "center" }}>
-            <Button onPress={updateProfile} color="yellow" title="Save" />
-          </View>
-        </View>
-      </Modal>
 
       {userDetails.currentUser.emailVerified ? (
-        <Text style={{ color: "green", fontSize: 15, textAlign: "center" }}>
-          You are verified
-        </Text>
+        <View style={{ alignItems: "center" }}>
+          <Text style={{ color: "green", fontSize: 15, textAlign: "center" }}>
+            You are verified
+          </Text>
+          <FontAwesome5 name="signature" size={24} color="black" />
+        </View>
       ) : (
         <View style={{ alignItems: "center", marginVertical: 30 }}>
           <Button onPress={emailVerify} title="Verify your Email" />
+          <FontAwesome5 name="signature" size={24} color="black" />
         </View>
       )}
-
-      <TouchableOpacity onPress={() => setUpdateProfileModal(true)}>
-        <Text style={{ textAlign: "center", marginTop: 40, color: "tomato" }}>
-          Update Profile
-        </Text>
-      </TouchableOpacity>
     </View>
   );
 }

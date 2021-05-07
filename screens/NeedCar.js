@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, FlatList, Image } from "react-native";
+import { Text, View, FlatList, Image, RefreshControl } from "react-native";
 import * as firebase from "firebase";
 import "firebase/firestore";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { Card, Button } from "react-native-paper";
 import FIREBASE_CONFIG from "./firebase";
 import { ActivityIndicator } from "react-native-paper";
@@ -22,6 +22,7 @@ const db = firebase.firestore();
 function NeedCar({ navigation }) {
   const [Data, setData] = useState([]);
   const [Pending, setPending] = useState(true);
+  const [refreshing, setRefreshing] = React.useState(false);
 
   useEffect(() => {
     getData();
@@ -41,6 +42,15 @@ function NeedCar({ navigation }) {
     });
   };
 
+  const wait = (timeout) => {
+    return new Promise((resolve) => setTimeout(resolve, timeout));
+  };
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
+
   return (
     <View style={{ flex: 1 }}>
       {Pending ? (
@@ -53,7 +63,10 @@ function NeedCar({ navigation }) {
           </Text>
         </View>
       ) : null}
+
       <FlatList
+        refreshing={refreshing}
+        onRefresh={onRefresh}
         data={Data}
         renderItem={({ item }) => (
           <Card>

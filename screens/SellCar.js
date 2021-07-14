@@ -12,8 +12,9 @@ import * as ImagePicker from "expo-image-picker";
 import firebase from "firebase";
 import "firebase/firestore";
 import "firebase/storage";
-import { ActivityIndicator, TextInput } from "react-native-paper";
+import { ActivityIndicator, IconButton, TextInput } from "react-native-paper";
 import { Ionicons, Entypo, Feather, AntDesign } from "@expo/vector-icons";
+import { Container, Header, Icon, Fab } from "native-base";
 
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyBsUWtnnpfv3wlZa76X5wfPhr25sJfRlFE",
@@ -39,6 +40,7 @@ export default function SellCar({ navigation }) {
   const [image, setImage] = useState([]);
   const [Car, setCar] = useState("");
   const [Data, setData] = useState([]);
+  const [open, setOpen] = useState(false);
 
   const userDetails = firebase.auth();
   const db = firebase.firestore();
@@ -62,9 +64,8 @@ export default function SellCar({ navigation }) {
   useEffect(() => {
     (async () => {
       if (Platform.OS !== "web") {
-        const {
-          status,
-        } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        const { status } =
+          await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== "granted") {
           alert("Sorry, we need camera roll permissions to make this work!");
         }
@@ -141,7 +142,7 @@ export default function SellCar({ navigation }) {
       }}
     >
       <ScrollView>
-        <View style={{ marginBottom: 30, alignItems: "center" }}>
+        <View style={{ marginBottom: 50, alignItems: "center", marginTop: 50 }}>
           {image.length ? (
             <View style={{ alignItems: "center" }}>
               <Image
@@ -173,24 +174,34 @@ export default function SellCar({ navigation }) {
             </View>
           ) : null}
 
-          <View
-            style={{ flexDirection: "row", marginBottom: 100, marginTop: 100 }}
-          >
-            <Entypo
-              style={{ right: 40 }}
-              name="folder-images"
-              size={40}
-              color="black"
-              onPress={onChooseImagePress}
-            />
-            <Ionicons
-              label="camera"
-              style={{ left: 40 }}
-              onPress={onChooseImagefromCamera}
-              name="ios-camera"
-              size={40}
-              color="black"
-            />
+          <View style={{ marginTop: 500 }}>
+            <Fab
+              active={open}
+              direction="up"
+              style={{ backgroundColor: "tomato" }}
+              onPress={() => {
+                open ? setOpen(false) : setOpen(true);
+              }}
+            >
+              <Icon name="add" />
+              <Button style={{ backgroundColor: "tomato" }}>
+                <Entypo
+                  name="folder-images"
+                  size={40}
+                  color="black"
+                  onPress={onChooseImagePress}
+                />
+              </Button>
+              <Button style={{ backgroundColor: "tomato" }}>
+                <Ionicons
+                  label="camera"
+                  onPress={onChooseImagefromCamera}
+                  name="ios-camera"
+                  size={40}
+                  color="black"
+                />
+              </Button>
+            </Fab>
           </View>
         </View>
       </ScrollView>

@@ -5,10 +5,13 @@ import firebase from "firebase";
 import { TextInput, Avatar } from "react-native-paper";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { Overlay } from "react-native-elements/dist/overlay/Overlay";
+import { Input } from "react-native-elements";
 
 export default function Profile({ navigation }) {
   const user = firebase.auth().currentUser;
   const userDetails = firebase.auth();
+  const [Name, setName] = useState("");
 
   const signOut = () => {
     firebase
@@ -31,6 +34,56 @@ export default function Profile({ navigation }) {
       .catch(function (error) {
         alert(error.message);
       });
+  };
+
+  const updatePR = () => {
+    var user = firebase.auth().currentUser;
+
+    user
+      .updateProfile({
+        displayName: Name,
+      })
+      .then(function () {
+        Alert.alert(
+          "Profile Updated",
+          "Your profile had been updated successfully "
+        );
+      })
+      .catch(function (error) {
+        // An error happened.
+      });
+  };
+
+  const OverlayExample = () => {
+    const [visible, setVisible] = useState(false);
+
+    const toggleOverlay = () => {
+      setVisible(!visible);
+    };
+
+    return (
+      <View>
+        <TouchableOpacity onPress={toggleOverlay}>
+          <Text
+            style={{
+              textAlign: "center",
+              color: "tomato",
+              marginTop: 40,
+              fontSize: 15,
+            }}
+          >
+            Update Profile
+          </Text>
+        </TouchableOpacity>
+
+        <Overlay isVisible={visible} onBackdropPress={toggleOverlay}>
+          <View style={{ width: 400 }}>
+            <Input placeholder="Enter Name" onChange={(val) => setName(val)} />
+            <Button onPress={updatePR} title="Update" />
+          </View>
+        </Overlay>
+      </View>
+    );
   };
 
   return (
@@ -88,6 +141,7 @@ export default function Profile({ navigation }) {
           <FontAwesome5 name="signature" size={24} color="black" />
         </View>
       )}
+      <OverlayExample />
     </View>
   );
 }

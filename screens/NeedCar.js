@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, FlatList, Image, RefreshControl } from "react-native";
+import {
+  Text,
+  View,
+  FlatList,
+  RefreshControl,
+  ActivityIndicator as ActivityByIos,
+} from "react-native";
 import * as firebase from "firebase";
 import "firebase/firestore";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
@@ -8,6 +14,7 @@ import FIREBASE_CONFIG from "./firebase";
 import { ActivityIndicator } from "react-native-paper";
 import { createStackNavigator } from "react-navigation-stack";
 import CarDetails from "./CarDetails";
+import { Image } from "react-native-elements";
 
 try {
   if (FIREBASE_CONFIG.apiKey) {
@@ -53,16 +60,16 @@ function NeedCar({ navigation }) {
 
   return (
     <View style={{ flex: 1 }}>
-      {Pending ? (
+      {Pending && (
         <View style={{ justifyContent: "center", flex: 1, marginTop: 250 }}>
           <ActivityIndicator animating={true} size={80} />
           <Text
             style={{ fontStyle: "italic", fontSize: 20, textAlign: "center" }}
           >
-            Fetching Data...
+            Loading....
           </Text>
         </View>
-      ) : null}
+      )}
 
       <FlatList
         refreshing={refreshing}
@@ -82,7 +89,11 @@ function NeedCar({ navigation }) {
               <TouchableOpacity
                 onPress={() => navigation.navigate("CarDetails", item)}
               >
-                <Card.Cover source={{ uri: item.image }} />
+                <Image
+                  source={{ uri: item.image }}
+                  style={{ width: 400, height: 250 }}
+                  PlaceholderContent={<ActivityIndicator />}
+                />
               </TouchableOpacity>
             </View>
           </Card>
